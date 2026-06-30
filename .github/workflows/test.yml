@@ -1,40 +1,37 @@
 name: Run Jupyter Notebook to see model performance on new data and to check for Datadrift
 on:
-    push:
-        branches:
-            - main
-    workflow_dispatch:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-    run-notebook:
-        runs-on: ubuntu-latest
+  run-notebook:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout Repository
-              uses: actions/checkout@v4
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-            - name: Set up Python
-              uses: actions/setup-python@v5
-              with:
-                  python-version: "3.11"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-            - name: Install Dependencies
-              run: |
-                  python -m pip install --upgrade pip
-                  pip install jupyter nbconvert ipykernel
-                  if [ -f requirements.txt ]; then
-                    pip install -r requirements.txt
-                  fi
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-            - name: Execute Notebook
-              run: |
-                  jupyter nbconvert \
-                    --to notebook \
-                    --execute notebooks/Data_drift.ipynb \
-                    --output executed_notebook.ipynb
+      - name: Execute Notebook
+        run: |
+          jupyter nbconvert \
+            --to notebook \
+            --execute notebooks/Data_drift.ipynb \
+            --output executed_notebook.ipynb
 
-            - name: Upload Executed Notebook
-              uses: actions/upload-artifact@v4
-              with:
-                  name: executed-notebook
-                  path: executed_notebook.ipynb
+      - name: Upload Executed Notebook
+        uses: actions/upload-artifact@v4
+        with:
+          name: executed-notebook
+          path: executed_notebook.ipynb
